@@ -1,10 +1,18 @@
 #include "mpeg.h"
-#include "../../include/music.h"
 
+#include <filesystem>
+#include <utility>
+
+#include <crow/logging.h>
+#include <id3v1tag.h>
+#include <id3v2tag.h>
 #include <mpegfile.h>
 #include <textidentificationframe.h>
-#include <id3v2tag.h>
-#include <id3v1tag.h>
+
+#include "../../include/tagConstants.h"
+#include "../../include/tagMapping.h"
+
+namespace fs = std::filesystem;
 
 using namespace clef::music::handler;
 using namespace clef::music::tag;
@@ -150,7 +158,7 @@ void Mpeg::removeTXXXFrame(TagLib::ID3v2::Tag *tag, const std::string &desc, con
     }
 }
 
-crow::response Mpeg::removeMusicTag(const TagModification &tagStruct, std::string *clefId) {
+crow::response Mpeg::removeMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     using namespace TagLib;
     const fs::path path { tagStruct.filePath };
@@ -239,7 +247,7 @@ void Mpeg::addTXXXFrame(TagLib::ID3v2::Tag *tag, const std::string &desc, const 
     tag->addFrame(newFrame);
 }
 
-void Mpeg::editTXXXFrame(TagLib::ID3v2::Tag* tag, const std::string& desc, const TagModification& tagStruct) {
+void Mpeg::editTXXXFrame(TagLib::ID3v2::Tag* tag, const std::string& desc, const TagChangeRequest& tagStruct) {
     using namespace clef::music;
     TagLib::ID3v2::FrameList userFrames = tag->frameList("TXXX");
     TagLib::ID3v2::UserTextIdentificationFrame *match = nullptr;
@@ -276,7 +284,7 @@ void Mpeg::editTXXXFrame(TagLib::ID3v2::Tag* tag, const std::string& desc, const
     match->setText(newValues);
 }
 
-crow::response Mpeg::addMusicTag(const TagModification &tagStruct, std::string *clefId) {
+crow::response Mpeg::addMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     using namespace TagLib;
 
@@ -328,7 +336,7 @@ crow::response Mpeg::addMusicTag(const TagModification &tagStruct, std::string *
     return crow::response {200, "OK" };
 }
 
-crow::response Mpeg::editMusicTags(const TagModification &tagStruct, std::string *clefId) {
+crow::response Mpeg::editMusicTags(const TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     using namespace TagLib;
 
@@ -358,7 +366,7 @@ crow::response Mpeg::editMusicTags(const TagModification &tagStruct, std::string
         return crow::response {200, "OK" };
     }
 
-    CROW_LOG_WARNING << "frames.size(): " << frames.size() << '\n';
+    CROW_LOG_WARNING << "frames.size(): " << frames.size();
     StringList values {};
     for (const auto a : frames) {
         if (const auto *b = dynamic_cast<ID3v2::TextIdentificationFrame*>(a)) {

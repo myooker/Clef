@@ -1,10 +1,13 @@
-#ifndef WEB_TAG_EDITOR_FLACTAGHANDLER_H
-#define WEB_TAG_EDITOR_FLACTAGHANDLER_H
+#ifndef CLEF_FLAC_H
+#define CLEF_FLAC_H
+
+#include <expected>
+#include <string>
+#include <string_view>
 
 #include <xiphcomment.h>
-#include "../../include/music.h"
+
 #include "../../include/interface.h"
-#include "../../include/clef.h"
 
 namespace clef::music::handler {
     class Flac : public Interface {
@@ -13,9 +16,9 @@ namespace clef::music::handler {
         static void ensureClefId(std::string *clefId, TagLib::Ogg::XiphComment *tag);
     public:
         std::expected<json, std::string> listMusicTags(const std::string &filePath) override;
-        crow::response removeMusicTag(const TagModification &tagStruct, std::string *clefId = nullptr) override;
-        crow::response addMusicTag(const TagModification &tagStruct, std::string *clefId = nullptr) override;
-        crow::response editMusicTags(const TagModification &tagStruct, std::string *clefId = nullptr) override;
+        crow::response removeMusicTag(const TagChangeRequest &tagStruct, std::string *clefId = nullptr) override;
+        crow::response addMusicTag(const TagChangeRequest &tagStruct, std::string *clefId = nullptr) override;
+        crow::response editMusicTags(const TagChangeRequest &tagStruct, std::string *clefId = nullptr) override;
         tag::Picture getAlbumCover(const std::string& filePath) override;
         void removeAlbumCover(const std::string& filePath) override {}
         void addAlbumCover(const std::string& filePath) override {}
@@ -23,4 +26,4 @@ namespace clef::music::handler {
     };
 }
 
-#endif //WEB_TAG_EDITOR_FLACTAGHANDLER_H
+#endif // CLEF_FLAC_H

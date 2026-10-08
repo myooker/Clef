@@ -1,6 +1,13 @@
 #include "mpeg4.h"
-#include "../../include/music.h"
+
+#include <algorithm>
+#include <utility>
+
+#include <crow/logging.h>
 #include <mp4file.h>
+
+#include "../../include/tagConstants.h"
+#include "../../include/tagMapping.h"
 
 using namespace clef::music::handler;
 using namespace clef::music::tag;
@@ -89,7 +96,7 @@ std::expected<json, std::string> Mpeg4::listMusicTags(const std::string &filePat
     return base;
 }
 
-crow::response Mpeg4::removeMusicTag(const TagModification &tagStruct, std::string *clefId) {
+crow::response Mpeg4::removeMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     TagLib::MP4::File file { tagStruct.filePath.c_str() };
 
@@ -113,7 +120,7 @@ crow::response Mpeg4::removeMusicTag(const TagModification &tagStruct, std::stri
     return {200, "OK"};
 }
 
-crow::response Mpeg4::addMusicTag(const TagModification &tagStruct, std::string *clefId) {
+crow::response Mpeg4::addMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     TagLib::MP4::File file { tagStruct.filePath.c_str() };
 
@@ -195,7 +202,7 @@ crow::response Mpeg4::addMusicTag(const TagModification &tagStruct, std::string 
     }
 }
 
-crow::response Mpeg4::editMusicTags(const TagModification &tagStruct, std::string *clefId) {
+crow::response Mpeg4::editMusicTags(const TagChangeRequest &tagStruct, std::string *clefId) {
     auto modified = tagStruct;
     modified.value = tagStruct.replaceWith;
     return addMusicTag(modified, clefId);

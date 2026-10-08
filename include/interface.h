@@ -1,14 +1,16 @@
-#ifndef WEB_TAG_EDITOR_MUSICTAGHANDLER_H
-#define WEB_TAG_EDITOR_MUSICTAGHANDLER_H
+#ifndef CLEF_INTERFACE_H
+#define CLEF_INTERFACE_H
 
-#include <string>
 #include <expected>
+#include <string>
+#include <string_view>
+
 #include <crow/http_response.h>
 #include <nlohmann/json.hpp>
-#include "clef.h"
-#include "music.h"
 
-namespace fs = std::filesystem;
+#include "picture.h"
+#include "tagChangeRequest.h"
+
 using json = nlohmann::json;
 
 namespace clef::music::handler {
@@ -17,9 +19,9 @@ namespace clef::music::handler {
         virtual ~Interface() = default;
 
         virtual std::expected<json, std::string> listMusicTags(const std::string& filePath) = 0;
-        virtual crow::response removeMusicTag(const TagModification& tagStruct, std::string* clefId = nullptr) = 0;
-        virtual crow::response addMusicTag(const TagModification& tagStruct, std::string* clefId = nullptr) = 0;
-        virtual crow::response editMusicTags(const TagModification& tagStruct, std::string* clefId = nullptr) = 0;
+        virtual crow::response removeMusicTag(const TagChangeRequest& tagStruct, std::string* clefId = nullptr) = 0;
+        virtual crow::response addMusicTag(const TagChangeRequest& tagStruct, std::string* clefId = nullptr) = 0;
+        virtual crow::response editMusicTags(const TagChangeRequest& tagStruct, std::string* clefId = nullptr) = 0;
         virtual tag::Picture getAlbumCover(const std::string& filePath) = 0;
         virtual void removeAlbumCover(const std::string& filePath) = 0;
         virtual void addAlbumCover(const std::string& filePath) = 0;
@@ -28,4 +30,4 @@ namespace clef::music::handler {
 }
 
 
-#endif //WEB_TAG_EDITOR_MUSICTAGHANDLER_H
+#endif // CLEF_INTERFACE_H

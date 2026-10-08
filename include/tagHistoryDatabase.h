@@ -1,12 +1,14 @@
-#ifndef WEB_TAG_EDITOR_SQLITE_H
-#define WEB_TAG_EDITOR_SQLITE_H
+#ifndef CLEF_TAGHISTORYDATABASE_H
+#define CLEF_TAGHISTORYDATABASE_H
 
+#include <string>
+#include <string_view>
+
+#include <SQLiteCpp/SQLiteCpp.h>
+#include <crow/http_response.h>
 #include <crow/logging.h>
 
-#include "SQLiteCpp/SQLiteCpp.h"
-#include "crow/http_response.h"
-
-namespace clef { struct TagModification; }
+#include "tagChangeRequest.h"
 
 namespace clef::storage {
     constexpr std::string_view add { "add" };
@@ -19,14 +21,13 @@ namespace clef::storage {
         std::string action { "NULL" };
     };
 
-    class Database {
+    class TagHistory {
     private:
-        SQLite::Database m_database;
+        SQLite::Database &m_database;
     public:
-        Database(const std::string &path)
-            : m_database(path, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE)
+        TagHistory(SQLite::Database &database)
+            : m_database(database)
         {
-            CROW_LOG_WARNING << "Opening database: " << path;
             m_database.exec(R"(
                 CREATE TABLE IF NOT EXISTS tag_history (
                     id           INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,11 +51,11 @@ namespace clef::storage {
         }
 
         SQLite::Database &getDatabase() { return m_database; }
-        crow::response insertAdd(const TagModification &tagStruct, const id &idStruct) const;
-        crow::response insertRemove(const TagModification &tagStruct, const id &idStruct) const;
-        crow::response insertEdit(const TagModification &tagStruct, const id &idStruct) const;
+        crow::response insertAdd(const TagChangeRequest &tagStruct, const id &idStruct) const;
+        crow::response insertRemove(const TagChangeRequest &tagStruct, const id &idStruct) const;
+        crow::response insertEdit(const TagChangeRequest &tagStruct, const id &idStruct) const;
         crow::response deleteFile(const std::string &path) const;
     };
 }
 
-#endif //WEB_TAG_EDITOR_SQLITE_H
+#endif // CLEF_TAGHISTORYDATABASE_H

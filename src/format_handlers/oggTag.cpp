@@ -1,10 +1,15 @@
 #include "oggTag.h"
+
+#include <utility>
+
+#include <crow/logging.h>
 #include <fileref.h>
-#include <vorbisfile.h>
 #include <oggflacfile.h>
 #include <opusfile.h>
 #include <speexfile.h>
+#include <vorbisfile.h>
 
+#include "../../include/tagMapping.h"
 #include "oggFlac.h"
 #include "oggOpus.h"
 #include "oggSpeex.h"
@@ -42,15 +47,15 @@ std::expected<json, std::string> OggTag::listMusicTags(const std::string &filePa
     return codecHandler(filePath)->listMusicTags(filePath);
 }
 
-crow::response OggTag::removeMusicTag(const TagModification &tagStruct, std::string *clefId) {
+crow::response OggTag::removeMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
    return codecHandler(tagStruct.filePath)->removeMusicTag(tagStruct, clefId);
 }
 
-crow::response OggTag::addMusicTag(const TagModification &tagStruct, std::string *clefId) {
+crow::response OggTag::addMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
    return codecHandler(tagStruct.filePath)->addMusicTag(tagStruct, clefId);
 }
 
-crow::response OggTag::editMusicTags(const TagModification &tagStruct, std::string *clefId) {
+crow::response OggTag::editMusicTags(const TagChangeRequest &tagStruct, std::string *clefId) {
    return codecHandler(tagStruct.filePath)->editMusicTags(tagStruct, clefId);
 }
 

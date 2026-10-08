@@ -1,20 +1,22 @@
-#ifndef WEB_TAG_EDITOR_UTILS_H
-#define WEB_TAG_EDITOR_UTILS_H
+#ifndef CLEF_UTILS_H
+#define CLEF_UTILS_H
 
-#include <algorithm>
-#include <string>
+#include <cstddef>
 #include <optional>
-#include "clef.h"
+#include <string>
+#include <string_view>
+
+#include "directoryListing.h"
 
 namespace clef::utils {
     bool naturalLess(std::string_view l, std::string_view r);
     bool nameLess(const FileEntity &a, const FileEntity &b);
-    bool entityLess(const FileEntity &a, const FileEntity &b, const QueryList &q);
+    bool entityLess(const FileEntity &a, const FileEntity &b, const DirectoryListOptions &q);
     std::optional<bool> parseBool(std::string_view a);
-    std::optional<QueryList::SortType> parseSortType(std::string_view a);
+    std::optional<DirectoryListOptions::SortType> parseSortType(std::string_view a);
     std::string generateId(std::size_t t=16);
     std::string getExtension(const std::string &path);
 
 }
 
-#endif //WEB_TAG_EDITOR_UTILS_H
+#endif // CLEF_UTILS_H

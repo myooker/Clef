@@ -1,7 +1,8 @@
-#ifndef WEB_TAG_EDITOR_MUSICTAGHANDLERFACTORY_H
-#define WEB_TAG_EDITOR_MUSICTAGHANDLERFACTORY_H
+#ifndef CLEF_FACTORY_H
+#define CLEF_FACTORY_H
 
 #include <memory>
+#include <string_view>
 
 #include "../../include/interface.h"
 
@@ -12,4 +13,4 @@ namespace clef::music::handler {
     };
 }
 
-#endif //WEB_TAG_EDITOR_MUSICTAGHANDLERFACTORY_H
+#endif // CLEF_FACTORY_H

@@ -1,4 +1,8 @@
 #include "../include/utils.h"
+
+#include <algorithm>
+#include <cctype>
+#include <filesystem>
 #include <random>
 
 namespace clef::utils {
@@ -39,8 +43,8 @@ namespace clef::utils {
         return a.name < b.name;
     }
 
-    bool entityLess(const FileEntity &a, const FileEntity &b, const QueryList &q) {
-        using SortType = QueryList::SortType;
+    bool entityLess(const FileEntity &a, const FileEntity &b, const DirectoryListOptions &q) {
+        using SortType = DirectoryListOptions::SortType;
 
         // Folders always first
         const bool ad = a.type == EntityType::directory;
@@ -70,8 +74,8 @@ namespace clef::utils {
         return std::nullopt;
     }
 
-    std::optional<QueryList::SortType> parseSortType(std::string_view a) {
-        using SortType = QueryList::SortType;
+    std::optional<DirectoryListOptions::SortType> parseSortType(std::string_view a) {
+        using SortType = DirectoryListOptions::SortType;
         if (a == "name") return SortType::name;
         if (a == "size") return SortType::size;
         if (a == "type") return SortType::type;
@@ -96,6 +100,6 @@ namespace clef::utils {
     }
 
     std::string getExtension(const std::string &path) {
-        return fs::path{path}.extension().string();
+        return std::filesystem::path{path}.extension().string();
     }
 }

@@ -1,6 +1,13 @@
 #include "oggVorbis.h"
+
+#include <cstddef>
+#include <utility>
+
+#include <crow/logging.h>
 #include <vorbisfile.h>
-#include "../../include/music.h"
+
+#include "../../include/tagConstants.h"
+#include "../../include/tagMapping.h"
 
 using namespace clef::music::handler;
 using namespace clef::music::tag;
@@ -49,7 +56,7 @@ std::expected<json, std::string> OggVorbis::listMusicTags(const std::string &fil
     return j;
 }
 
-crow::response OggVorbis::removeMusicTag(const TagModification &tagStruct, std::string *clefId) {
+crow::response OggVorbis::removeMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
     TagLib::Ogg::Vorbis::File file{tagStruct.filePath.c_str()};
     if (!file.isValid()) {
         CROW_LOG_ERROR << __PRETTY_FUNCTION__ << ": " << tagStruct.filePath << " is not valid";
@@ -91,7 +98,7 @@ crow::response OggVorbis::removeMusicTag(const TagModification &tagStruct, std::
     return {200, "OK"};
 }
 
-crow::response OggVorbis::addMusicTag(const TagModification &tagStruct, std::string *clefId) {
+crow::response OggVorbis::addMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
     TagLib::Ogg::Vorbis::File file{tagStruct.filePath.c_str()};
 
     if (!file.isValid()) {
@@ -113,7 +120,7 @@ crow::response OggVorbis::addMusicTag(const TagModification &tagStruct, std::str
     return {200, "File/s saved!"};
 }
 
-crow::response OggVorbis::editMusicTags(const TagModification &tagStruct, std::string *clefId) {
+crow::response OggVorbis::editMusicTags(const TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     TagLib::Ogg::Vorbis::File file{tagStruct.filePath.c_str()};
 

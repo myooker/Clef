@@ -1,5 +1,10 @@
-#ifndef WEB_TAG_EDITOR_OGGTAGHANDLER_H
-#define WEB_TAG_EDITOR_OGGTAGHANDLER_H
+#ifndef CLEF_OGGTAG_H
+#define CLEF_OGGTAG_H
+
+#include <expected>
+#include <memory>
+#include <string>
+#include <string_view>
 
 #include "../../include/interface.h"
 
@@ -10,9 +15,9 @@ namespace clef::music::handler {
         std::string m_filePath{};
     public:
         std::expected<json, std::string> listMusicTags(const std::string &filePath) override;
-        crow::response removeMusicTag(const TagModification &tagStruct, std::string *clefId = nullptr) override;
-        crow::response addMusicTag(const TagModification &tagStruct, std::string *clefId = nullptr) override;
-        crow::response editMusicTags(const TagModification &tagStruct, std::string *clefId = nullptr) override;
+        crow::response removeMusicTag(const TagChangeRequest &tagStruct, std::string *clefId = nullptr) override;
+        crow::response addMusicTag(const TagChangeRequest &tagStruct, std::string *clefId = nullptr) override;
+        crow::response editMusicTags(const TagChangeRequest &tagStruct, std::string *clefId = nullptr) override;
         tag::Picture getAlbumCover(const std::string& filePath) override { return tag::Picture{}; }
         void removeAlbumCover(const std::string& filePath) override {}
         void addAlbumCover(const std::string& filePath) override {}
@@ -22,4 +27,4 @@ namespace clef::music::handler {
     };
 } // audioFormat
 
-#endif // WEB_TAG_EDITOR_OGGTAGHANDLER_H
+#endif // CLEF_OGGTAG_H

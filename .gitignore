@@ -11,4 +11,5 @@ docs-api.md
 docker-compose.yml
 deploy-to-server.sh
 clef.tar
+rte.tar
 .clangd

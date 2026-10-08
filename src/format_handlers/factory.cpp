@@ -1,4 +1,9 @@
 #include "factory.h"
+
+#include <algorithm>
+#include <cctype>
+#include <string>
+
 #include "flac.h"
 #include "mpeg4.h"
 #include "mpeg.h"

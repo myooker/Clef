@@ -1,5 +1,9 @@
-#ifndef WEB_TAG_EDITOR_MPEG4TAGHANDLER_H
-#define WEB_TAG_EDITOR_MPEG4TAGHANDLER_H
+#ifndef CLEF_MPEG4_H
+#define CLEF_MPEG4_H
+
+#include <expected>
+#include <string>
+#include <string_view>
 
 #include <mp4tag.h>
 
@@ -12,10 +16,10 @@ namespace clef::music::handler {
         static void ensureClefId(std::string *clefId, TagLib::MP4::Tag *tag);
     public:
         std::expected<json, std::string> listMusicTags(const std::string &filePath) override;
-        static void addUserDefinedAtom(const TagModification &tagStruct);
-        crow::response removeMusicTag(const TagModification &tagStruct, std::string *clefId = nullptr) override;
-        crow::response addMusicTag(const TagModification &tagStruct, std::string *clefId = nullptr) override;
-        crow::response editMusicTags(const TagModification &tagStruct, std::string *clefId = nullptr) override;
+        static void addUserDefinedAtom(const TagChangeRequest &tagStruct);
+        crow::response removeMusicTag(const TagChangeRequest &tagStruct, std::string *clefId = nullptr) override;
+        crow::response addMusicTag(const TagChangeRequest &tagStruct, std::string *clefId = nullptr) override;
+        crow::response editMusicTags(const TagChangeRequest &tagStruct, std::string *clefId = nullptr) override;
         tag::Picture getAlbumCover(const std::string& filePath) override { return tag::Picture{}; }
         void removeAlbumCover(const std::string& filePath) override {}
         void addAlbumCover(const std::string& filePath) override {}
@@ -23,4 +27,4 @@ namespace clef::music::handler {
     };
 } // audioFormat
 
-#endif // WEB_TAG_EDITOR_MPEG4TAGHANDLER_H
+#endif // CLEF_MPEG4_H
