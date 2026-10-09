@@ -1,4 +1,4 @@
-#include "../include/tagHistoryDatabase.h"
+#include "../../include/database/tagHistory.h"
 
 namespace clef::storage {
     crow::response TagHistory::insertAdd(const TagChangeRequest &tagStruct, const id &idStruct) const {

@@ -6,7 +6,10 @@
 #include <crow/logging.h>
 
 namespace clef {
-    struct AuthMiddleware {
+    class AuthMiddleware {
+    private:
+
+    public:
         struct context
         {};
 
@@ -14,6 +17,10 @@ namespace clef {
             if (req.url == "/api/auth/login" && req.method == crow::HTTPMethod::POST) {
                 return;
             }
+            if (req.url == "/api/auth/signup" && req.method == crow::HTTPMethod::POST) {
+                return;
+            }
+            // here we need to check users session
             return;
         }
 

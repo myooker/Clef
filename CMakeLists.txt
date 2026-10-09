@@ -18,7 +18,7 @@ FetchContent_MakeAvailable(SQLiteCpp)
 
 set(CLEF_SOURCES
     src/main.cpp
-    src/storage.cpp
+        src/database/tagHistory.cpp
     src/tagMapping.cpp
     src/utils.cpp
 
@@ -32,10 +32,11 @@ set(CLEF_SOURCES
     src/format_handlers/oggTag.cpp
     src/format_handlers/oggVorbis.cpp
         src/clef.cpp
+        src/database/users.cpp
 )
 
 set(CLEF_HEADERS
-    include/authMiddleware.h
+        include/authentication/authMiddleware.h
     include/clef.h
     include/clefConstants.h
     include/directoryListing.h
@@ -44,9 +45,9 @@ set(CLEF_HEADERS
     include/picture.h
     include/tagChangeRequest.h
     include/tagConstants.h
-    include/tagHistoryDatabase.h
+        include/database/tagHistory.h
     include/tagMapping.h
-    include/usersDatabase.h
+        include/database/users.h
     include/utils.h
 
     src/format_handlers/factory.h
@@ -58,6 +59,7 @@ set(CLEF_HEADERS
     src/format_handlers/oggSpeex.h
     src/format_handlers/oggTag.h
     src/format_handlers/oggVorbis.h
+        include/authentication/sessionStore.h
 )
 
 add_executable(Clef ${CLEF_SOURCES} ${CLEF_HEADERS})

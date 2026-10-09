@@ -7,8 +7,8 @@
 #include <SQLiteCpp/Database.h>
 
 #include "clefConstants.h"
-#include "tagHistoryDatabase.h"
-#include "usersDatabase.h"
+#include "database/tagHistory.h"
+#include "database/users.h"
 #include "tagMapping.h"
 
 namespace clef {
@@ -64,31 +64,8 @@ namespace clef {
         [[nodiscard]] bool getClefIdStatus() const { return m_useClefId; }
         [[nodiscard]] int getPort() const { return m_port; }
 
+        [[nodiscard]] std::expected<std::string, bool> userLogin() const;
     };
-
-    // struct Settings {
-    //     std::string mountpoint { "/music" };
-    //     std::string dbpath { "data/database.db" };
-    //     std::string mappingpath { "data/mapping.json" };
-    //     bool useClefId { false };
-    //     int port{ 18080 };
-    //
-    //     [[nodiscard]] bool isExist() const {
-    //         const fs::path p { mountpoint };
-    //         return !std::filesystem::exists(p);
-    //     }
-    //
-    //     [[nodiscard]] bool isMountPoint(const std::string &requestedPath) const {
-    //         const std::string mp { fs::canonical(mountpoint) };        // canonical mount point
-    //         const std::string rp { fs::canonical(requestedPath) };     // canonical requested path
-    //
-    //         if (rp.starts_with(mp)) {
-    //             return true;
-    //         }
-    //
-    //         return false;
-    //     }
-    // };
 }
 
 #endif // CLEF_CLEF_H

@@ -21,13 +21,14 @@
 #include <nlohmann/json.hpp>
 #include <SQLiteCpp/SQLiteCpp.h>
 
-#include "../include/authMiddleware.h"
+#include "../include/authentication/authMiddleware.h"
 #include "../include/directoryListing.h"
 #include "../include/clef.h"
 #include "../include/clefConstants.h"
 #include "../include/tagChangeRequest.h"
 #include "../include/tagConstants.h"
-#include "../include/tagHistoryDatabase.h"
+#include "../include/database/tagHistory.h"
+#include "../include/database/users.h"
 #include "../include/tagMapping.h"
 #include "../include/utils.h"
 #include "format_handlers/factory.h"
