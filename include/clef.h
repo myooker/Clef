@@ -53,7 +53,7 @@ namespace clef {
         }
 
         Application(Application &&) = delete;
-        Application& operator=(Application &&) = delete;
+        Application &operator=(Application &&) = delete;
 
         [[nodiscard]] bool isMountPoint(std::string_view rpath) const;
 

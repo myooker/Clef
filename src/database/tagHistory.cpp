@@ -47,7 +47,7 @@ namespace clef::storage {
         return crow::response{ 200 };
     }
 
-    crow::response TagHistory::deleteFile(const std::string& path) const {
+    crow::response TagHistory::deleteFile(const std::string &path) const {
         SQLite::Statement deletePath(m_database,
         "DELETE FROM tag_history WHERE path = ?");
         deletePath.bind(1, path);

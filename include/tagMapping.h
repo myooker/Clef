@@ -23,13 +23,13 @@ namespace clef::music::tag {
         std::unordered_map<std::string, const json*> m_aumap;
         std::size_t m_maphash;
 
-        static json buildAliasMap(const json& src) {
+        static json buildAliasMap(const json &src) {
             json out = json::object();
-            for (const auto& [fname, values] : src.items()) {
+            for (const auto &[fname, values] : src.items()) {
                 json a = json::array();
-                for (const auto& [cname, cvalues] : values.items()) {
+                for (const auto &[cname, cvalues] : values.items()) {
                     if (cvalues.is_array())
-                        for (const auto& x : cvalues) a += x;
+                        for (const auto &x : cvalues) a += x;
                     else
                         a += cvalues;
                 }
@@ -40,8 +40,8 @@ namespace clef::music::tag {
 
         std::unordered_map<std::string, const json*> buildUnorderedAliasMap() {
             std::unordered_map<std::string, const json*> t;
-            for (const auto& [key, values] : m_amap.items()) {
-                for (const auto& value : values.items()) {
+            for (const auto &[key, values] : m_amap.items()) {
+                for (const auto &value : values.items()) {
                     t.emplace(key, &value.value());
                 }
             }
@@ -58,7 +58,7 @@ namespace clef::music::tag {
         std::size_t getMapHash() const { return m_maphash; }
 
         [[nodiscard]]
-        const json& aliases() const noexcept { return m_amap; }
+        const json &aliases() const noexcept { return m_amap; }
 
         /**
          * @brief Find occurrence of fname in mapping table
@@ -70,7 +70,7 @@ namespace clef::music::tag {
          */
         [[nodiscard]]
         std::expected<const std::string_view, std::string>
-        find(const std::string& fname, const std::string& cname, format f = format::ID3v24) const {
+        find(const std::string &fname, const std::string &cname, format f = format::ID3v24) const {
             if (auto fname_it = m_map.find(fname); fname_it != m_map.end()) {
                 if (auto cname_it = fname_it->find(cname); cname_it != fname_it->end()) {
                     if (cname_it.value().is_array())
@@ -83,8 +83,8 @@ namespace clef::music::tag {
         }
 
         [[nodiscard]]
-        bool contain(const std::string& fname) const {
-            return std::ranges::any_of(m_amap, [&, needle = json(fname)](const json& a) {
+        bool contain(const std::string &fname) const {
+            return std::ranges::any_of(m_amap, [&, needle = json(fname)](const json &a) {
                 return std::ranges::find(a, needle) != a.end();
             });
         }
@@ -98,7 +98,7 @@ namespace clef::music::tag {
          */
         [[nodiscard]]
         std::expected<std::string, std::string>
-        resolve(const std::string& fname, const std::string& cname, format f = format::ID3v24) const {
+        resolve(const std::string &fname, const std::string &cname, format f = format::ID3v24) const {
             // An empty name would resolve to an empty frame ID further down.
             if (fname.empty())
                 return std::unexpected("empty fname");
@@ -129,7 +129,7 @@ namespace clef::music::tag {
         }
     };
 
-    TagMapping* getTagMap();
+    TagMapping *getTagMap();
 }
 
 #endif // CLEF_TAGMAPPING_H

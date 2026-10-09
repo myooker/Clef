@@ -12,7 +12,7 @@
 using namespace clef::music::handler;
 using namespace clef::music::tag;
 
-void Mpeg4::ensureClefId(std::string* clefId, TagLib::MP4::Tag* tag) {
+void Mpeg4::ensureClefId(std::string *clefId, TagLib::MP4::Tag *tag) {
     using namespace clef::music;
     using namespace TagLib;
 

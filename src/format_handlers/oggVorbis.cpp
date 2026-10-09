@@ -40,7 +40,7 @@ std::expected<json, std::string> OggVorbis::listMusicTags(const std::string &fil
 
     json j;
     const auto tag = file.tag();
-    for (const auto & [key, values]: tag->fieldListMap()) {
+    for (const auto &[key, values]: tag->fieldListMap()) {
         if (values.size() > 1) {
             const std::size_t temp{values.size()};
             for (std::size_t i{0}; i < temp; ++i) {

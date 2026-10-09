@@ -20,9 +20,9 @@ namespace clef::music::handler {
         crow::response removeMusicTag(const TagChangeRequest &tagStruct, std::string *clefId = nullptr) override;
         crow::response addMusicTag(const TagChangeRequest &tagStruct, std::string *clefId = nullptr) override;
         crow::response editMusicTags(const TagChangeRequest &tagStruct, std::string *clefId = nullptr) override;
-        tag::Picture getAlbumCover(const std::string& filePath) override { return tag::Picture{}; }
-        void removeAlbumCover(const std::string& filePath) override {}
-        void addAlbumCover(const std::string& filePath) override {}
+        tag::Picture getAlbumCover(const std::string &filePath) override { return tag::Picture{}; }
+        void removeAlbumCover(const std::string &filePath) override {}
+        void addAlbumCover(const std::string &filePath) override {}
         std::expected<std::string, std::string> resolveTag(std::string_view tag) override;
     };
 } // audioFormat

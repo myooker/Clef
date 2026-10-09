@@ -159,7 +159,7 @@ int main (int argc, char **argv) {
         cli.add_flag("--use-clefid", useClefId, "");
         CLI11_PARSE(cli, argc, argv);
 
-        const char* clefId = std::getenv(clef::environments::useClefId.data());
+        const char *clefId = std::getenv(clef::environments::useClefId.data());
         if (clefId) {
             useClefId = clef::utils::parseBool(clefId).value_or(false);
         }
@@ -206,7 +206,7 @@ int main (int argc, char **argv) {
     });
 
     CROW_ROUTE(app, "/api/undo").methods("POST"_method)
-    ([&](const crow::request& req) {
+    ([&](const crow::request &req) {
         using namespace TagLib;
 
         constexpr std::string_view logPrefix { "(api/undo): " };
@@ -283,7 +283,7 @@ int main (int argc, char **argv) {
     });
 
     CROW_ROUTE(app, "/api/getalbumcover").methods("GET"_method)
-    ([&](const crow::request& req) {
+    ([&](const crow::request &req) {
         crow::response response{500};
         const std::string filePath = req.url_params.get("path");
         if (!application->isMountPoint(filePath)) {

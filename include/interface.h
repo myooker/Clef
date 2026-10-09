@@ -18,13 +18,13 @@ namespace clef::music::handler {
     public:
         virtual ~Interface() = default;
 
-        virtual std::expected<json, std::string> listMusicTags(const std::string& filePath) = 0;
-        virtual crow::response removeMusicTag(const TagChangeRequest& tagStruct, std::string* clefId = nullptr) = 0;
-        virtual crow::response addMusicTag(const TagChangeRequest& tagStruct, std::string* clefId = nullptr) = 0;
-        virtual crow::response editMusicTags(const TagChangeRequest& tagStruct, std::string* clefId = nullptr) = 0;
-        virtual tag::Picture getAlbumCover(const std::string& filePath) = 0;
-        virtual void removeAlbumCover(const std::string& filePath) = 0;
-        virtual void addAlbumCover(const std::string& filePath) = 0;
+        virtual std::expected<json, std::string> listMusicTags(const std::string &filePath) = 0;
+        virtual crow::response removeMusicTag(const TagChangeRequest &tagStruct, std::string *clefId = nullptr) = 0;
+        virtual crow::response addMusicTag(const TagChangeRequest &tagStruct, std::string *clefId = nullptr) = 0;
+        virtual crow::response editMusicTags(const TagChangeRequest &tagStruct, std::string *clefId = nullptr) = 0;
+        virtual tag::Picture getAlbumCover(const std::string &filePath) = 0;
+        virtual void removeAlbumCover(const std::string &filePath) = 0;
+        virtual void addAlbumCover(const std::string &filePath) = 0;
         virtual std::expected<std::string, std::string> resolveTag(std::string_view tag) = 0;
     };
 }

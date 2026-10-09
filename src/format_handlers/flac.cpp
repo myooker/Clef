@@ -45,7 +45,7 @@ std::expected<json, std::string> Flac::listMusicTags(const std::string &filePath
 
     json j;
     const auto tag = file.xiphComment();
-    for (const auto & [key, values] : tag->fieldListMap()) {
+    for (const auto &[key, values] : tag->fieldListMap()) {
         if (values.size() > 1) {
             const std::size_t temp { values.size() };
             for (std::size_t i { 0 }; i < temp; ++i) {
@@ -184,7 +184,7 @@ crow::response Flac::editMusicTags(const TagChangeRequest &tagStruct, std::strin
     return { 200, "OK" };
 }
 
-Picture Flac::getAlbumCover(const std::string& filePath) {
+Picture Flac::getAlbumCover(const std::string &filePath) {
     using namespace clef::music;
 
     TagLib::FLAC::File file { filePath.c_str() };

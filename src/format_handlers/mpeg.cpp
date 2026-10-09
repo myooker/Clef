@@ -17,7 +17,7 @@ namespace fs = std::filesystem;
 using namespace clef::music::handler;
 using namespace clef::music::tag;
 
-void Mpeg::ensureClefId(std::string* clefId, TagLib::ID3v2::Tag* tag) {
+void Mpeg::ensureClefId(std::string *clefId, TagLib::ID3v2::Tag *tag) {
     using namespace TagLib;
 
     const String clefIdDescription { tag::clefId.data(), String::UTF8 };
@@ -65,7 +65,7 @@ std::expected<json, std::string> Mpeg::listMusicTags(const std::string &filePath
 
     const auto *tag = file.ID3v2Tag();
     const auto map = tag->frameListMap();
-    for (const auto & [frameID, frameList] : map) {
+    for (const auto &[frameID, frameList] : map) {
         for (auto *frame : frameList) {
             // Checking whether frame is User-defined. If not, the nullptr will result, skipping this part.
             if (const auto *user = dynamic_cast<TagLib::ID3v2::UserTextIdentificationFrame*>(frame)) {
@@ -247,7 +247,7 @@ void Mpeg::addTXXXFrame(TagLib::ID3v2::Tag *tag, const std::string &desc, const 
     tag->addFrame(newFrame);
 }
 
-void Mpeg::editTXXXFrame(TagLib::ID3v2::Tag* tag, const std::string& desc, const TagChangeRequest& tagStruct) {
+void Mpeg::editTXXXFrame(TagLib::ID3v2::Tag *tag, const std::string &desc, const TagChangeRequest &tagStruct) {
     using namespace clef::music;
     TagLib::ID3v2::FrameList userFrames = tag->frameList("TXXX");
     TagLib::ID3v2::UserTextIdentificationFrame *match = nullptr;

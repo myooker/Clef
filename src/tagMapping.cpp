@@ -7,7 +7,7 @@
 #include <crow/logging.h>
 
 namespace clef::music::tag {
-    TagMapping* getTagMap() {
+    TagMapping *getTagMap() {
         std::ifstream f { "data/mapping.json" };
         if (!f.is_open()) {
             CROW_LOG_ERROR << __PRETTY_FUNCTION__ << ": mapping.json file was not found.";
