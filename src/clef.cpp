@@ -15,4 +15,13 @@ namespace clef {
 
         return false;
     }
+
+    std::string Application::userLogin(std::string_view username, std::string_view password) {
+        if (m_users.validatePassword(username, password)) {
+            auto id = m_users.getUserId(username);
+            //CROW_LOG_WARNING << "id: " << id;
+            return m_sessionStore.createSession(id);
+        }
+        return "";
+    }
 }

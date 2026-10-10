@@ -18,6 +18,7 @@
 #include <CLI/CLI.hpp>
 #include <crow/compression.h>
 #include <crow/middlewares/cors.h>
+#include <crow/middlewares/cookie_parser.h>
 #include <nlohmann/json.hpp>
 #include <SQLiteCpp/SQLiteCpp.h>
 
@@ -188,10 +189,50 @@ int main (int argc, char **argv) {
         default: logLevel = crow::LogLevel::INFO; break;
     }
 
-    crow::App<crow::CORSHandler> app;
+    crow::App<crow::CORSHandler, crow::CookieParser, clef::AuthMiddleware> app;
+    app.get_middleware<clef::AuthMiddleware>().setSessionStore(application->getSessionStore());
     CROW_LOG_INFO << clef::name << " v" << clef::version << " is running now";
     CROW_LOG_INFO << "Mountpoint: " << application->getMountPoint();
     CROW_LOG_INFO << "Listenting port: " << application->getPort();
+
+    CROW_ROUTE(app, "/api/auth/login").methods("POST"_method)
+    ([&](const crow::request &req) {
+        constexpr std::string_view logPrefix { "(api/auth/login): " };
+        crow::response res;
+        const json reqbody = json::parse(req.body);
+        std::string username { reqbody.value("username", clef::jsonMissingValue.data()) };
+        std::string password { reqbody.value("password", clef::jsonMissingValue.data()) };
+
+        auto sessionToken = application->userLogin(username, password);
+        CROW_LOG_WARNING << logPrefix << "sessionToken: " << sessionToken;
+        res.set_header(
+          "Set-Cookie",
+          "clef_session="+ sessionToken +
+          "; HttpOnly; SameSite=Lax; Path=/"
+        );
+        res.set_header("Cache-Control", "no-cache");
+
+        return res;
+    });
+
+    // CROW_ROUTE(app, "/api/auth/signup").methods("POST"_method)
+    // ([&](const crow::request &req) {
+    //     constexpr std::string_view logPrefix { "(api/auth/signup): " };
+    //     const json reqbody = json::parse(req.body);
+    //     std::string username { reqbody.value("username", clef::jsonMissingValue.data()) };
+    //     std::string password { reqbody.value("password", clef::jsonMissingValue.data()) };
+    //
+    //     CROW_LOG_WARNING << logPrefix << username;
+    //     CROW_LOG_WARNING << logPrefix << password;
+    //
+    //     if (application->getUsersDB().createUser(username, password)) {
+    //         CROW_LOG_WARNING << logPrefix << username << " is created successfully";
+    //         return crow::response { 200 };
+    //     }
+    //
+    //     CROW_LOG_WARNING << logPrefix << username << " is taken. Please choose something else!";
+    //     return crow::response { 500, "Username is taken" };
+    // });
 
     CROW_ROUTE(app, "/api/settings").methods("GET"_method)
     ([&]() {
@@ -506,6 +547,7 @@ int main (int argc, char **argv) {
                     CROW_LOG_DEBUG << "(api/store)" << key << " = " << value;
                     if (key == "filename") {
                         filename = value;
+                        break;
                     }
                 }
                 CROW_LOG_INFO << "(api/store) filename = " << filename;
@@ -522,6 +564,7 @@ int main (int argc, char **argv) {
                 CROW_LOG_DEBUG << "(api/store) outFile.write() ends";
                 outfile.close();
                 CROW_LOG_DEBUG << "(api/store) outFile.close()";
+                return crow::response{ 200, "OK"};
             } else {
                 CROW_LOG_CRITICAL << "(api/store) std::string_view *filepart is nullptr";
                 return crow::response { 500, "nullptr" };

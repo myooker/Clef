@@ -1,5 +1,7 @@
 #include "../../include/database/users.h"
 
+#include <crow/logging.h>
+
 namespace clef::storage {
     std::optional<bool> Users::createUser(std::string_view username, std::string_view password) const {
         if (isUsernameTaken(username)) {
@@ -14,6 +16,16 @@ namespace clef::storage {
         createUser.bind(++i, password.data());
         createUser.exec();
         return true;
+    }
+
+    std::uint32_t Users::getUserId(std::string_view username) const {
+        SQLite::Statement findUserId(m_database, R"(
+            SELECT id FROM users WHERE username = ?;
+        )");
+        int i{};
+        findUserId.bind(++i, username.data());
+        findUserId.executeStep();
+        return findUserId.getColumn(0).getInt();
     }
 
     std::optional<bool> Users::deleteUser(std::uint32_t id) const {
@@ -48,7 +60,16 @@ namespace clef::storage {
         return findUser.executeStep();
     }
 
-    std::optional<bool> Users::updateUser() const {
-        return true;
+    bool Users::validatePassword(std::string_view username, std::string_view password) const {
+        SQLite::Statement findUser(m_database, R"(
+            SELECT password FROM users
+            WHERE username = ?
+        )");
+        int i{};
+        findUser.bind(++i, username.data());
+        if (findUser.executeStep()) {
+            return findUser.getColumn(0).getString() == password.data();
+        }
+        return false;
     }
 }

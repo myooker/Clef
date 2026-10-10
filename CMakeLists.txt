@@ -33,6 +33,7 @@ set(CLEF_SOURCES
     src/format_handlers/oggVorbis.cpp
         src/clef.cpp
         src/database/users.cpp
+        src/authentication/sessionStore.cpp
 )
 
 set(CLEF_HEADERS

@@ -9,7 +9,7 @@
 #include "clefConstants.h"
 #include "database/tagHistory.h"
 #include "database/users.h"
-#include "tagMapping.h"
+#include "authentication/sessionStore.h"
 
 namespace clef {
     namespace fs = std::filesystem;
@@ -20,6 +20,7 @@ namespace clef {
 
     class Application {
     private:
+        SessionStore m_sessionStore {};
         fs::path m_databasePath { "data/database.db" };
         SQLite::Database m_database;
         storage::Users m_users;
@@ -57,6 +58,7 @@ namespace clef {
 
         [[nodiscard]] bool isMountPoint(std::string_view rpath) const;
 
+        SessionStore *getSessionStore() { return &m_sessionStore; }
         SQLite::Database &getDatabase() { return m_database; }
         [[nodiscard]] const storage::TagHistory &getTagHistoryDB() const { return m_tagHistory; }
         [[nodiscard]] const storage::Users &getUsersDB() const { return m_users; }
@@ -64,7 +66,7 @@ namespace clef {
         [[nodiscard]] bool getClefIdStatus() const { return m_useClefId; }
         [[nodiscard]] int getPort() const { return m_port; }
 
-        [[nodiscard]] std::expected<std::string, bool> userLogin() const;
+        [[nodiscard]] std::string userLogin(std::string_view username, std::string_view password);
     };
 }
 

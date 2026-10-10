@@ -21,10 +21,12 @@ namespace clef::storage {
         }
 
         std::optional<bool> createUser(std::string_view username, std::string_view password) const;
+        std::uint32_t getUserId(std::string_view username) const;
         std::optional<bool> deleteUser(std::uint32_t id) const;
         std::optional<bool> deleteUser(std::string_view username) const;
         bool isUsernameTaken(std::string_view username) const;
-        std::optional<bool> updateUser() const;
+        bool validatePassword(std::string_view username, std::string_view password) const;
+        //std::optional<bool> updateUser() const;
     };
 }
 
