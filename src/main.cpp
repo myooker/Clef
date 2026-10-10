@@ -517,60 +517,57 @@ int main (int argc, char **argv) {
     ([&](const crow::request &req) {
         constexpr std::string_view logPrefix { "(api/store): " };
         crow::multipart::message_view msg (req);
-        const std::string_view *filepart { nullptr }; // Store binary data of a file
+        const std::string_view *fileBinary { nullptr }; // Store binary data of a file
         std::string_view filepath {};
         std::string_view filename {};
 
         // Parse multipart map
-        for (const auto &entry : msg.part_map) {
+        for (const auto & [fieldName, part] : msg.part_map) {
             // Find "path" in part map, assign file's path to filepath and log it
-            if (entry.first == "path") {
-                filepath = entry.second.body;
-                CROW_LOG_INFO << "(api/store) path = " << filepath;
-
-                if (!application->isMountPoint(std::string(filepath))) {
-                    CROW_LOG_ERROR << logPrefix << "requested filepath is not a mount-point";
-                    return crow::response{ 500, "The requested path is not a mount-point" };
-                }
+            if (fieldName == "path") {
+                filepath = part.body;
+                CROW_LOG_INFO << logPrefix << "requested path: " << filepath;
+                continue;
             }
             // Find "file" in part map, assign binary data to filepart variable
             // Search for "Content-Disposition" header, search "filename" in it
             // Assign it to filename variable and log it
-            if (entry.first == "file") {
-                filepart = &entry.second.body; // Binary data
-                auto header_it = entry.second.headers.find("Content-Disposition");
-                if (header_it == entry.second.headers.end()) {
-                    CROW_LOG_ERROR << "(api/store) No Content-Disposition found";
+            if (fieldName == "file") {
+                fileBinary = &part.body; // Binary data
+                auto header_it = part.headers.find("Content-Disposition");
+                if (header_it == part.headers.end()) {
+                    CROW_LOG_ERROR << logPrefix << "No Content-Disposition found";
                     return crow::response(400, "Content-Disposition Not Found");
                 }
                 for (const auto &[key, value] : header_it->second.params) {
-                    CROW_LOG_DEBUG << "(api/store)" << key << " = " << value;
+                    CROW_LOG_DEBUG << logPrefix << key << " = " << value;
                     if (key == "filename") {
                         filename = value;
                         break;
                     }
                 }
-                CROW_LOG_INFO << "(api/store) filename = " << filename;
-            }
-
-            // Now we need to store files on a drive
-            fs::path destinationPath = fs::path(filepath) / fs::path(filename).filename();
-            CROW_LOG_DEBUG << "(api/store) destinationPath.string(): " << destinationPath.string();
-            CROW_LOG_DEBUG << "(api/store) destinationPath.filename(): " << destinationPath.filename();
-            std::ofstream outfile { destinationPath, std::ios::binary };
-            if (filepart) {
-                CROW_LOG_DEBUG << "(api/store) outFile.write() starts";
-                outfile.write(filepart->data(), filepart->size());
-                CROW_LOG_DEBUG << "(api/store) outFile.write() ends";
-                outfile.close();
-                CROW_LOG_DEBUG << "(api/store) outFile.close()";
-                return crow::response{ 200, "OK"};
-            } else {
-                CROW_LOG_CRITICAL << "(api/store) std::string_view *filepart is nullptr";
-                return crow::response { 500, "nullptr" };
             }
         }
-        return crow::response{ 200, "OK"};
+        if (!application->isMountPoint(filepath)) {
+            CROW_LOG_ERROR << logPrefix << "requested filepath is not a mount-point";
+            return crow::response{ 403, "The requested path is not a mount-point" };
+        }
+
+        // Now we need to store files on a drive
+        fs::path destinationPath = fs::path(filepath) / fs::path(filename).filename();
+        CROW_LOG_WARNING << logPrefix << "destinationPath.string(): " << destinationPath.string();
+        CROW_LOG_WARNING << logPrefix << "destinationPath.filename(): " << destinationPath.filename();
+        std::ofstream outfile { destinationPath, std::ios::binary };
+        if (fileBinary) {
+            CROW_LOG_DEBUG << logPrefix << "outFile.write() starts";
+            outfile.write(fileBinary->data(), fileBinary->size());
+            CROW_LOG_DEBUG << logPrefix << "outFile.write() ends";
+            outfile.close();
+            CROW_LOG_DEBUG << logPrefix << "outFile.close()";
+            return crow::response{ 200, "OK"};
+        }
+        CROW_LOG_CRITICAL << logPrefix << filename << ": file part not found";
+        return crow::response { 400, std::string(filename) + " file part not found" };
     });
 
     CROW_ROUTE(app, "/api/rename").methods("POST"_method)
