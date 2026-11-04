@@ -39,6 +39,7 @@ set(CLEF_SOURCES
         src/tags/mp4.cpp
         src/format_handlers/wav.cpp
         src/tags/riff.cpp
+        src/tags/id3v1.cpp
 )
 
 set(CLEF_HEADERS
@@ -71,6 +72,7 @@ set(CLEF_HEADERS
         src/tags/mp4.h
         src/format_handlers/wav.h
         src/tags/riff.h
+        src/tags/id3v1.h
 )
 
 add_executable(Clef ${CLEF_SOURCES} ${CLEF_HEADERS})
