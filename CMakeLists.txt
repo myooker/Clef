@@ -40,6 +40,8 @@ set(CLEF_SOURCES
         src/format_handlers/wav.cpp
         src/tags/riff.cpp
         src/tags/id3v1.cpp
+        src/tags/ape.cpp
+        src/tags/ape.h
 )
 
 set(CLEF_HEADERS
