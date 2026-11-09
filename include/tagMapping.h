@@ -20,7 +20,6 @@ namespace clef::music::tag {
     private:
         const json m_map;
         const json m_amap;
-        std::unordered_map<std::string, const json*> m_aumap;
         std::size_t m_maphash;
 
         static json buildAliasMap(const json &src) {
@@ -38,21 +37,10 @@ namespace clef::music::tag {
             return out;
         }
 
-        std::unordered_map<std::string, const json*> buildUnorderedAliasMap() {
-            std::unordered_map<std::string, const json*> t;
-            for (const auto &[key, values] : m_amap.items()) {
-                for (const auto &value : values.items()) {
-                    t.emplace(key, &value.value());
-                }
-            }
-            return t;
-        }
-
     public:
         explicit TagMapping(std::ifstream f)
             : m_map(json::parse(f)),
               m_amap(buildAliasMap(m_map)),
-              m_aumap(buildUnorderedAliasMap()),
               m_maphash(std::hash<std::string>{}(m_map.dump())) {}
 
         std::size_t getMapHash() const { return m_maphash; }
