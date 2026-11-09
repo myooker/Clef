@@ -1,7 +1,6 @@
 #include "ape.h"
 
-#include <iostream>
-
+#include "../../include/tagConstants.h"
 #include "../../include/tagMapping.h"
 
 namespace clef::music::ape {
@@ -16,6 +15,15 @@ namespace clef::music::ape {
             }
         }
         return j;
+    }
+
+    void ensureClefId(APE::Tag *tag, std::string *clefid) {
+        auto &map = tag->itemListMap();
+        auto clefIdIt = map.find(String(tag::clefId.data()).upper());
+        if (clefIdIt != map.end()) {
+            *clefid = clefIdIt->second.toString().toCString(false);
+        }
+        tag->addValue(String(tag::clefId.data()).upper(), *clefid, true);
     }
 
     void removeMusicTag(APE::Tag *tag, const TagChangeRequest &tagStruct) {
