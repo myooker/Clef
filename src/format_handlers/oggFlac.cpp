@@ -25,7 +25,7 @@ std::expected<json, std::string> OggFlac::listMusicTags(const std::string &fileP
     return std::unexpected(filePath + " does not have Xiph Comments");
 }
 
-crow::response OggFlac::removeMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response OggFlac::removeMusicTag(TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     TagLib::Ogg::FLAC::File file{tagStruct.filePath.c_str()};
 
@@ -49,7 +49,7 @@ crow::response OggFlac::removeMusicTag(const TagChangeRequest &tagStruct, std::s
     return {200, "OK"};
 }
 
-crow::response OggFlac::addMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response OggFlac::addMusicTag(TagChangeRequest &tagStruct, std::string *clefId) {
     TagLib::Ogg::FLAC::File file{tagStruct.filePath.c_str()};
 
     if (!file.isValid()) {
@@ -74,7 +74,7 @@ crow::response OggFlac::addMusicTag(const TagChangeRequest &tagStruct, std::stri
     return {200, "File/s saved!"};
 }
 
-crow::response OggFlac::editMusicTags(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response OggFlac::editMusicTags(TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     TagLib::Ogg::FLAC::File file{tagStruct.filePath.c_str()};
 

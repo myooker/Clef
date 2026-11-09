@@ -21,7 +21,7 @@ std::expected<json, std::string> OggSpeex::listMusicTags(const std::string &file
     return j;
 }
 
-crow::response OggSpeex::removeMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response OggSpeex::removeMusicTag(TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     TagLib::Ogg::Speex::File file{tagStruct.filePath.c_str()};
 
@@ -41,7 +41,7 @@ crow::response OggSpeex::removeMusicTag(const TagChangeRequest &tagStruct, std::
     return {200, "OK"};
 }
 
-crow::response OggSpeex::addMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response OggSpeex::addMusicTag(TagChangeRequest &tagStruct, std::string *clefId) {
     TagLib::Ogg::Speex::File file{tagStruct.filePath.c_str()};
 
     if (!file.isValid()) {
@@ -62,7 +62,7 @@ crow::response OggSpeex::addMusicTag(const TagChangeRequest &tagStruct, std::str
     return {200, "File/s saved!"};
 }
 
-crow::response OggSpeex::editMusicTags(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response OggSpeex::editMusicTags(TagChangeRequest &tagStruct, std::string *clefId) {
     TagLib::Ogg::Speex::File file{tagStruct.filePath.c_str()};
 
     if (!file.isValid()) {

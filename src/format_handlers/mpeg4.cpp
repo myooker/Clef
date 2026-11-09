@@ -25,7 +25,7 @@ std::expected<json, std::string> Mpeg4::listMusicTags(const std::string &filePat
     return std::unexpected(filePath + " does not have mp4 tags");
 }
 
-crow::response Mpeg4::removeMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response Mpeg4::removeMusicTag(TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     TagLib::MP4::File file { tagStruct.filePath.c_str() };
 
@@ -49,7 +49,7 @@ crow::response Mpeg4::removeMusicTag(const TagChangeRequest &tagStruct, std::str
     return {200, "OK"};
 }
 
-crow::response Mpeg4::addMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response Mpeg4::addMusicTag(TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     TagLib::MP4::File file { tagStruct.filePath.c_str() };
 
@@ -84,7 +84,7 @@ crow::response Mpeg4::addMusicTag(const TagChangeRequest &tagStruct, std::string
     return { 500, "Has not been saved" };
 }
 
-crow::response Mpeg4::editMusicTags(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response Mpeg4::editMusicTags(TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     TagLib::MP4::File file { tagStruct.filePath.c_str() };
 

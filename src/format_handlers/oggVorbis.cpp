@@ -21,7 +21,7 @@ std::expected<json, std::string> OggVorbis::listMusicTags(const std::string &fil
     return j;
 }
 
-crow::response OggVorbis::removeMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response OggVorbis::removeMusicTag(TagChangeRequest &tagStruct, std::string *clefId) {
     TagLib::Ogg::Vorbis::File file{tagStruct.filePath.c_str()};
     if (!file.isValid()) {
         CROW_LOG_ERROR << __PRETTY_FUNCTION__ << ": " << tagStruct.filePath << " is not valid";
@@ -39,7 +39,7 @@ crow::response OggVorbis::removeMusicTag(const TagChangeRequest &tagStruct, std:
     return {200, "OK"};
 }
 
-crow::response OggVorbis::addMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response OggVorbis::addMusicTag(TagChangeRequest &tagStruct, std::string *clefId) {
     TagLib::Ogg::Vorbis::File file{tagStruct.filePath.c_str()};
 
     if (!file.isValid()) {
@@ -60,7 +60,7 @@ crow::response OggVorbis::addMusicTag(const TagChangeRequest &tagStruct, std::st
     return {200, "File/s saved!"};
 }
 
-crow::response OggVorbis::editMusicTags(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response OggVorbis::editMusicTags(TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     TagLib::Ogg::Vorbis::File file{tagStruct.filePath.c_str()};
 

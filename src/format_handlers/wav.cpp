@@ -28,7 +28,7 @@ std::expected<json, std::string> Wav::listMusicTags(const std::string &filePath)
     return j;
 }
 
-crow::response Wav::removeMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response Wav::removeMusicTag(TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     TagLib::RIFF::WAV::File file { tagStruct.filePath.c_str() };
 
@@ -61,7 +61,7 @@ crow::response Wav::removeMusicTag(const TagChangeRequest &tagStruct, std::strin
     return crow::response { 200 };
 }
 
-crow::response Wav::addMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response Wav::addMusicTag(TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     TagLib::RIFF::WAV::File file { tagStruct.filePath.c_str() };
 
@@ -100,7 +100,7 @@ crow::response Wav::addMusicTag(const TagChangeRequest &tagStruct, std::string *
     return crow::response { 200 };
 }
 
-crow::response Wav::editMusicTags(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response Wav::editMusicTags(TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     TagLib::RIFF::WAV::File file { tagStruct.filePath.c_str() };
 

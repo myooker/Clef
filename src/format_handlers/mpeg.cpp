@@ -5,7 +5,9 @@
 #include <crow/logging.h>
 #include <mpegfile.h>
 
+#include "../tags/ape.h"
 #include "../tags/id3v2.h"
+#include "../tags/id3v1.h"
 
 namespace fs = std::filesystem;
 
@@ -30,7 +32,7 @@ std::expected<json, std::string> Mpeg::listMusicTags(const std::string &filePath
     return std::unexpected("The file does not have ID3v2Tag");
 }
 
-crow::response Mpeg::removeMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response Mpeg::removeMusicTag(TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     using namespace TagLib;
     const fs::path path { tagStruct.filePath };
@@ -52,7 +54,7 @@ crow::response Mpeg::removeMusicTag(const TagChangeRequest &tagStruct, std::stri
     return crow::response {200, "OK" };
 }
 
-crow::response Mpeg::addMusicTag(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response Mpeg::addMusicTag(TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     using namespace TagLib;
 
@@ -80,7 +82,7 @@ crow::response Mpeg::addMusicTag(const TagChangeRequest &tagStruct, std::string 
     return crow::response {200, "OK" };
 }
 
-crow::response Mpeg::editMusicTags(const TagChangeRequest &tagStruct, std::string *clefId) {
+crow::response Mpeg::editMusicTags(TagChangeRequest &tagStruct, std::string *clefId) {
     using namespace clef::music;
     using namespace TagLib;
 
