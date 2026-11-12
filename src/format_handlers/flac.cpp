@@ -9,6 +9,30 @@
 using namespace clef::music::handler;
 using namespace clef::music::tag;
 
+std::expected<std::string, std::string> Flac::getArtist(std::string_view filepath) {
+    if (TagLib::FLAC::File file { filepath.data() }; file.isValid())
+        return file.xiphComment()->artist().to8Bit(true);
+    return std::unexpected(std::string(filepath) + " is not valid");
+}
+
+std::expected<std::string, std::string> Flac::getAlbum(std::string_view filepath) {
+    if (TagLib::FLAC::File file { filepath.data() }; file.isValid())
+        return file.xiphComment()->album().to8Bit(true);
+    return std::unexpected(std::string(filepath) + " is not valid");
+}
+
+std::expected<std::string, std::string> Flac::getTitle(std::string_view filepath) {
+    if (TagLib::FLAC::File file { filepath.data() }; file.isValid())
+        return file.xiphComment()->title().to8Bit(true);
+    return std::unexpected(std::string(filepath) + " is not valid");
+}
+
+std::expected<std::string, std::string> Flac::getGenre(std::string_view filepath) {
+    if (TagLib::FLAC::File file { filepath.data() }; file.isValid())
+        return file.xiphComment()->genre().to8Bit(true);
+    return std::unexpected(std::string(filepath) + " is not valid");
+}
+
 std::expected<json, std::string> Flac::listMusicTags(const std::string &filePath) {
     TagLib::FLAC::File file { filePath.c_str() };
 

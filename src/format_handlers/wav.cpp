@@ -7,6 +7,34 @@
 using namespace clef::music::handler;
 using namespace clef::music::tag;
 
+std::expected<std::string, std::string> Wav::getArtist(std::string_view filepath) {
+    TagLib::RIFF::WAV::File file { filepath.data() };
+    if (file.isValid())
+        return file.tag()->artist().to8Bit(true);
+    return std::unexpected(std::string(filepath) + "is not valid");
+}
+
+std::expected<std::string, std::string> Wav::getAlbum(std::string_view filepath) {
+    TagLib::RIFF::WAV::File file { filepath.data() };
+    if (file.isValid())
+        return file.tag()->album().to8Bit(true);
+    return std::unexpected(std::string(filepath) + "is not valid");
+}
+
+std::expected<std::string, std::string> Wav::getTitle(std::string_view filepath) {
+    TagLib::RIFF::WAV::File file { filepath.data() };
+    if (file.isValid())
+        return file.tag()->title().to8Bit(true);
+    return std::unexpected(std::string(filepath) + "is not valid");
+}
+
+std::expected<std::string, std::string> Wav::getGenre(std::string_view filepath) {
+    TagLib::RIFF::WAV::File file { filepath.data() };
+    if (file.isValid())
+        return file.tag()->genre().to8Bit(true);
+    return std::unexpected(std::string(filepath) + "is not valid");
+}
+
 std::expected<json, std::string> Wav::listMusicTags(const std::string &filePath) {
     using namespace clef::music;
     TagLib::RIFF::WAV::File file { filePath.c_str() };

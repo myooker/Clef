@@ -13,6 +13,34 @@ namespace fs = std::filesystem;
 
 using namespace clef::music::handler;
 
+std::expected<std::string, std::string> Mpeg::getArtist(std::string_view filepath) {
+    TagLib::MPEG::File file { filepath.data() };
+    if (file.isValid())
+        return file.ID3v2Tag()->artist().to8Bit(true);
+    return std::unexpected(std::string(filepath) + " is not valid");
+}
+
+std::expected<std::string, std::string> Mpeg::getAlbum(std::string_view filepath) {
+    TagLib::MPEG::File file { filepath.data() };
+    if (file.isValid())
+        return file.ID3v2Tag()->album().to8Bit(true);
+    return std::unexpected(std::string(filepath) + " is not valid");
+}
+
+std::expected<std::string, std::string> Mpeg::getTitle(std::string_view filepath) {
+    TagLib::MPEG::File file { filepath.data() };
+    if (file.isValid())
+        return file.ID3v2Tag()->title().to8Bit(true);
+    return std::unexpected(std::string(filepath) + " is not valid");
+}
+
+std::expected<std::string, std::string> Mpeg::getGenre(std::string_view filepath) {
+    TagLib::MPEG::File file { filepath.data() };
+    if (file.isValid())
+        return file.ID3v2Tag()->genre().to8Bit(true);
+    return std::unexpected(std::string(filepath) + " is not valid");
+}
+
 std::expected<json, std::string> Mpeg::listMusicTags(const std::string &filePath) {
     using namespace clef::music;
     TagLib::MPEG::File file { filePath.c_str() };

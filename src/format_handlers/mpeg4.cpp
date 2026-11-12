@@ -7,6 +7,34 @@
 
 using namespace clef::music::handler;
 
+std::expected<std::string, std::string> Mpeg4::getArtist(std::string_view filepath) {
+    TagLib::MP4::File file { filepath.data() };
+    if (file.isValid())
+        return file.tag()->artist().to8Bit(true);
+    return std::unexpected(std::string(filepath) + "is not valid");
+}
+
+std::expected<std::string, std::string> Mpeg4::getAlbum(std::string_view filepath) {
+    TagLib::MP4::File file { filepath.data() };
+    if (file.isValid())
+        return file.tag()->album().to8Bit(true);
+    return std::unexpected(std::string(filepath) + "is not valid");
+}
+
+std::expected<std::string, std::string> Mpeg4::getTitle(std::string_view filepath) {
+    TagLib::MP4::File file { filepath.data() };
+    if (file.isValid())
+        return file.tag()->title().to8Bit(true);
+    return std::unexpected(std::string(filepath) + "is not valid");
+}
+
+std::expected<std::string, std::string> Mpeg4::getGenre(std::string_view filepath) {
+    TagLib::MP4::File file { filepath.data() };
+    if (file.isValid())
+        return file.tag()->genre().to8Bit(true);
+    return std::unexpected(std::string(filepath) + "is not valid");
+}
+
 std::expected<json, std::string> Mpeg4::listMusicTags(const std::string &filePath) {
     using namespace clef::music;
     const TagLib::MP4::File file { filePath.c_str() };

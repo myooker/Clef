@@ -8,6 +8,34 @@
 using namespace clef::music::handler;
 namespace xiph = clef::music::xiph;
 
+std::expected<std::string, std::string> OggOpus::getArtist(std::string_view filepath) {
+    TagLib::Ogg::Opus::File file { filepath.data() };
+    if (file.isValid())
+        return file.tag()->artist().to8Bit(true);
+    return std::unexpected(std::string(filepath) + "is not valid");
+}
+
+std::expected<std::string, std::string> OggOpus::getAlbum(std::string_view filepath) {
+    TagLib::Ogg::Opus::File file { filepath.data() };
+    if (file.isValid())
+        return file.tag()->album().to8Bit(true);
+    return std::unexpected(std::string(filepath) + "is not valid");
+}
+
+std::expected<std::string, std::string> OggOpus::getTitle(std::string_view filepath) {
+    TagLib::Ogg::Opus::File file { filepath.data() };
+    if (file.isValid())
+        return file.tag()->title().to8Bit(true);
+    return std::unexpected(std::string(filepath) + "is not valid");
+}
+
+std::expected<std::string, std::string> OggOpus::getGenre(std::string_view filepath) {
+    TagLib::Ogg::Opus::File file { filepath.data() };
+    if (file.isValid())
+        return file.tag()->genre().to8Bit(true);
+    return std::unexpected(std::string(filepath) + "is not valid");
+}
+
 std::expected<json, std::string> OggOpus::listMusicTags(const std::string &filePath) {
     TagLib::Ogg::Opus::File file{filePath.c_str()};
 

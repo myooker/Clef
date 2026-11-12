@@ -18,6 +18,10 @@ namespace clef::music::handler {
     public:
         virtual ~Interface() = default;
 
+        virtual std::expected<std::string, std::string> getArtist(std::string_view filepath) = 0;
+        virtual std::expected<std::string, std::string> getAlbum(std::string_view filepath) = 0;
+        virtual std::expected<std::string, std::string> getTitle(std::string_view filepath) = 0;
+        virtual std::expected<std::string, std::string> getGenre(std::string_view filepath) = 0;
         virtual std::expected<json, std::string> listMusicTags(const std::string &filePath) = 0;
         virtual crow::response removeMusicTag(TagChangeRequest &tagStruct, std::string *clefId = nullptr) = 0;
         virtual crow::response addMusicTag(TagChangeRequest &tagStruct, std::string *clefId = nullptr) = 0;

@@ -43,6 +43,23 @@ std::unique_ptr<Interface> OggTag::codecHandler(const std::string &filePath) {
     return nullptr;
 }
 
+std::expected<std::string, std::string> OggTag::getArtist(std::string_view filepath) {
+    return codecHandler(filepath.data())->getArtist(filepath);
+}
+
+std::expected<std::string, std::string> OggTag::getAlbum(std::string_view filepath) {
+    return codecHandler(filepath.data())->getAlbum(filepath);
+}
+
+std::expected<std::string, std::string> OggTag::getTitle(std::string_view filepath) {
+    return codecHandler(filepath.data())->getTitle(filepath);
+}
+
+std::expected<std::string, std::string> OggTag::getGenre(std::string_view filepath) {
+    return codecHandler(filepath.data())->getGenre(filepath);
+}
+
+
 std::expected<json, std::string> OggTag::listMusicTags(const std::string &filePath) {
     return codecHandler(filePath)->listMusicTags(filePath);
 }

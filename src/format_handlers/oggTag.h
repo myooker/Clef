@@ -14,6 +14,10 @@ namespace clef::music::handler {
         constexpr static std::string_view m_type { "vorbis" };
         std::string m_filePath{};
     public:
+        std::expected<std::string, std::string> getArtist(std::string_view filepath) override;
+        std::expected<std::string, std::string> getAlbum(std::string_view filepath) override;
+        std::expected<std::string, std::string> getTitle(std::string_view filepath) override;
+        std::expected<std::string, std::string> getGenre(std::string_view filepath) override;
         std::expected<json, std::string> listMusicTags(const std::string &filePath) override;
         crow::response removeMusicTag(TagChangeRequest &tagStruct, std::string *clefId = nullptr) override;
         crow::response addMusicTag(TagChangeRequest &tagStruct, std::string *clefId = nullptr) override;
