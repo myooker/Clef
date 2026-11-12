@@ -308,15 +308,21 @@ int main (int argc, char **argv) {
             String oldValue   { q.getColumn(1).getString(), String::UTF8 };
             String newValue   { q.getColumn(2).getString(), String::UTF8 };
 
+            clef::TagChangeRequest tagStruct {
+                .filePath = path,
+                .fieldType = tag,
+                .formatType = format
+            };
             if (action == "add") {
-                isGood = handler->removeMusicTag
-                    ({.filePath = path, .fieldType = tag, .formatType = format, .value = newValue}).code == 200;
+                tagStruct.value = newValue;
+                isGood = handler->removeMusicTag(tagStruct).code == 200;
             } else if (action == "change") {
-                isGood = handler->editMusicTags
-                    ({.filePath = path, .fieldType = tag, .formatType = format, .replaceWhat = newValue, .replaceWith = oldValue}).code == 200;
+                tagStruct.replaceWhat = newValue;
+                tagStruct.replaceWith = oldValue;
+                isGood = handler->editMusicTags(tagStruct).code == 200;
             } else if (action == "remove") {
-                isGood = handler->addMusicTag
-                    ({.filePath = path, .fieldType = tag, .formatType = format, .value = oldValue}).code == 200;
+                tagStruct.value = oldValue;
+                isGood = handler->addMusicTag(tagStruct).code == 200;
             } else {
                 isGood = false;
             }
