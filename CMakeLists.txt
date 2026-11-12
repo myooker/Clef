@@ -50,7 +50,6 @@ set(CLEF_HEADERS
     include/clefConstants.h
     include/directoryListing.h
         src/format_handlers/interface.h
-    include/music.h
     include/picture.h
     include/tagChangeRequest.h
     include/tagConstants.h
