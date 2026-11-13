@@ -2,6 +2,8 @@
 
 #include <chrono>
 #include <cstdint>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include <crow/logging.h>
@@ -17,7 +19,12 @@ namespace clef::storage {
     };
 
     void Library::scan(const fs::path &mountPoint, std::stop_token stop) {
-        std::vector<Entry> entries;
+        std::unordered_map<std::string, std::pair<std::int64_t, std::int64_t>> stored;
+        SQLite::Statement select { m_database, "SELECT path, size, mtime FROM library" };
+        while (select.executeStep())
+            stored[select.getColumn(0).getString()] = { select.getColumn(1).getInt64(), select.getColumn(2).getInt64() };
+
+        std::vector<Entry> changed;
 
         std::error_code error;
         fs::recursive_directory_iterator it { mountPoint, fs::directory_options::skip_permission_denied, error };
@@ -29,13 +36,24 @@ namespace clef::storage {
             if (!entry.directory)
                 entry.size = static_cast<std::int64_t>(it->file_size());
             entry.mtime = std::chrono::file_clock::to_sys(it->last_write_time()).time_since_epoch().count();
-            entries.push_back(std::move(entry));
+
+            if (const auto found = stored.find(entry.path); found != stored.end()) {
+                const bool same = found->second == std::pair { entry.size, entry.mtime };
+                stored.erase(found);
+                if (same) continue;
+            }
+            changed.push_back(std::move(entry));
+        }
+
+        if (error) {
+            CROW_LOG_ERROR << "Library scan stopped at " << mountPoint << ": " << error.message();
+            return;
         }
 
         SQLite::Transaction transaction { m_database };
         SQLite::Statement insert { m_database,
             "INSERT OR REPLACE INTO library (path, directory, size, mtime) VALUES (?, ?, ?, ?)" };
-        for (const auto &entry : entries) {
+        for (const auto &entry : changed) {
             insert.bind(1, entry.path);
             insert.bind(2, entry.directory ? 1 : 0);
             insert.bind(3, entry.size);
@@ -43,8 +61,14 @@ namespace clef::storage {
             insert.exec();
             insert.reset();
         }
+        SQLite::Statement remove { m_database, "DELETE FROM library WHERE path = ?" };
+        for (const auto &[path, values] : stored) {
+            remove.bind(1, path);
+            remove.exec();
+            remove.reset();
+        }
         transaction.commit();
 
-        CROW_LOG_INFO << "Library scan: " << entries.size() << " entries";
+        CROW_LOG_INFO << "Library scan: " << changed.size() << " changed, " << stored.size() << " removed";
     }
 }
