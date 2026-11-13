@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <thread>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -28,6 +29,7 @@
 #include "../include/clefConstants.h"
 #include "../include/tagChangeRequest.h"
 #include "../include/tagConstants.h"
+#include "../include/database/library.h"
 #include "../include/database/tagHistory.h"
 //#include "../include/database/users.h"
 #include "../include/tagMapping.h"
@@ -841,6 +843,15 @@ int main (int argc, char **argv) {
         }
 
     });
+
+    std::jthread scanner { [&](std::stop_token stop) {
+        try {
+            clef::storage::Library library { application->getDatabase().getFilename() };
+            library.scan(application->getMountPoint(), stop);
+        } catch (std::exception &e) {
+            CROW_LOG_ERROR << "Library scan failed: " << e.what();
+        }
+    } };
 
     app.loglevel(logLevel);
     app.use_compression(crow::compression::GZIP);

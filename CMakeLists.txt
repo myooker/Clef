@@ -19,6 +19,7 @@ FetchContent_MakeAvailable(SQLiteCpp)
 set(CLEF_SOURCES
     src/main.cpp
         src/database/tagHistory.cpp
+        src/database/library.cpp
     src/tagMapping.cpp
     src/utils.cpp
 
@@ -54,6 +55,7 @@ set(CLEF_HEADERS
     include/tagChangeRequest.h
     include/tagConstants.h
         include/database/tagHistory.h
+        include/database/library.h
     include/tagMapping.h
         include/database/users.h
     include/utils.h
