@@ -7,6 +7,9 @@
 #include <vector>
 
 #include <crow/logging.h>
+#include <fileref.h>
+
+#include "../format_handlers/factory.h"
 
 namespace fs = std::filesystem;
 
@@ -16,6 +19,10 @@ namespace clef::storage {
         bool directory {};
         std::int64_t size {};
         std::int64_t mtime {};
+        std::string title;
+        std::string artist;
+        std::string album;
+        std::string genre;
     };
 
     void Library::scan(const fs::path &mountPoint, std::stop_token stop) {
@@ -42,6 +49,14 @@ namespace clef::storage {
                 stored.erase(found);
                 if (same) continue;
             }
+
+            const auto handler = music::handler::Factory::create(it->path().extension().string());
+            if (handler && !TagLib::FileRef { entry.path.c_str() }.isNull()) {
+                entry.title = handler->getTitle(entry.path).value_or("");
+                entry.artist = handler->getArtist(entry.path).value_or("");
+                entry.album = handler->getAlbum(entry.path).value_or("");
+                entry.genre = handler->getGenre(entry.path).value_or("");
+            }
             changed.push_back(std::move(entry));
         }
 
@@ -52,12 +67,17 @@ namespace clef::storage {
 
         SQLite::Transaction transaction { m_database };
         SQLite::Statement insert { m_database,
-            "INSERT OR REPLACE INTO library (path, directory, size, mtime) VALUES (?, ?, ?, ?)" };
+            "INSERT OR REPLACE INTO library (path, directory, size, mtime, title, artist, album, genre) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)" };
         for (const auto &entry : changed) {
             insert.bind(1, entry.path);
             insert.bind(2, entry.directory ? 1 : 0);
             insert.bind(3, entry.size);
             insert.bind(4, entry.mtime);
+            insert.bind(5, entry.title);
+            insert.bind(6, entry.artist);
+            insert.bind(7, entry.album);
+            insert.bind(8, entry.genre);
             insert.exec();
             insert.reset();
         }
