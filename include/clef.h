@@ -56,6 +56,7 @@ namespace clef {
             if (!isExist(m_mountPoint.c_str())) {
                 throw std::runtime_error ("Mount point does not exist: " + m_mountPoint.string());
             }
+            m_database.setBusyTimeout(5000);
         }
 
         Application(Application &&) = delete;
