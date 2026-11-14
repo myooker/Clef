@@ -844,6 +844,9 @@ int main (int argc, char **argv) {
 
     });
 
+    app.loglevel(logLevel);
+    app.use_compression(crow::compression::GZIP);
+
     std::jthread scanner { [&](std::stop_token stop) {
         try {
             clef::storage::Library library { application->getDatabase().getFilename() };
@@ -853,8 +856,6 @@ int main (int argc, char **argv) {
         }
     } };
 
-    app.loglevel(logLevel);
-    app.use_compression(crow::compression::GZIP);
     app.port(application->getPort()).multithreaded().run();
 
     return 0;

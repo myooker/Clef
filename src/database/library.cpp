@@ -26,6 +26,8 @@ namespace clef::storage {
     };
 
     void Library::scan(const fs::path &mountPoint, std::stop_token stop) {
+        CROW_LOG_INFO << "Library scan started on " << mountPoint;
+
         std::unordered_map<std::string, std::pair<std::int64_t, std::int64_t>> stored;
         SQLite::Statement select { m_database, "SELECT path, size, mtime FROM library" };
         while (select.executeStep())
@@ -57,6 +59,7 @@ namespace clef::storage {
                 entry.album = handler->getAlbum(entry.path).value_or("");
                 entry.genre = handler->getGenre(entry.path).value_or("");
             }
+            CROW_LOG_DEBUG << "Library scan: " << entry.path;
             changed.push_back(std::move(entry));
         }
 
