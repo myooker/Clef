@@ -5,6 +5,8 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <sys/inotify.h>
+#include <unistd.h>
 
 #include <crow/logging.h>
 #include <fileref.h>
@@ -26,7 +28,7 @@ namespace clef::storage {
     };
 
     void Library::scan(const fs::path &mountPoint, std::stop_token stop) {
-        CROW_LOG_INFO << "Library scan started on " << mountPoint;
+        CROW_LOG_WARNING << "Library scan started on " << mountPoint;
 
         std::unordered_map<std::string, std::pair<std::int64_t, std::int64_t>> stored;
         SQLite::Statement select { m_database, "SELECT path, size, mtime FROM library" };
@@ -93,5 +95,38 @@ namespace clef::storage {
         transaction.commit();
 
         CROW_LOG_INFO << "Library scan: " << changed.size() << " changed, " << stored.size() << " removed";
+    }
+
+    void Library::watch(const std::filesystem::path &mountPoint, std::stop_token stop) {
+        int fd = inotify_init();
+        const uint32_t mask = IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVED_FROM | IN_MOVED_TO;
+        inotify_add_watch(fd, mountPoint.c_str(), mask);
+        char buff [4096];
+
+        for (const auto &entry : fs::recursive_directory_iterator(mountPoint)) {
+            if (entry.is_directory() && !entry.is_symlink()) {
+                CROW_LOG_WARNING << "Adding watcher to " << entry.path().c_str();
+                inotify_add_watch(fd, entry.path().c_str(), mask);
+            }
+        }
+        CROW_LOG_WARNING << __PRETTY_FUNCTION__ << " has started.";
+        while (!stop.stop_requested()) {
+            ssize_t bytesRead = read(fd, buff, sizeof(buff));
+            ssize_t offset = 0;
+            while (offset < bytesRead) {
+                auto *event = reinterpret_cast<struct inotify_event*>(buff + offset);
+                if (event->mask & IN_CREATE)
+                    CROW_LOG_WARNING << __PRETTY_FUNCTION__ << " - created";
+                if (event->mask & IN_DELETE)
+                    CROW_LOG_WARNING << __PRETTY_FUNCTION__ << " - deleted";
+                if (event->mask & IN_MODIFY)
+                    CROW_LOG_WARNING << __PRETTY_FUNCTION__ << " - modified";
+                if (event->mask & IN_MOVED_FROM)
+                    CROW_LOG_WARNING << __PRETTY_FUNCTION__ << " - moved from";
+                if (event->mask & IN_MOVED_TO)
+                    CROW_LOG_WARNING << __PRETTY_FUNCTION__ << " - moved to";
+                offset += sizeof(inotify_event) + event->len;
+            }
+        }
     }
 }

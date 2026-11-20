@@ -847,15 +847,17 @@ int main (int argc, char **argv) {
     app.loglevel(logLevel);
     app.use_compression(crow::compression::GZIP);
 
+    clef::storage::Library library { application->getDatabase().getFilename() };
     std::jthread scanner { [&](std::stop_token stop) {
         try {
-            clef::storage::Library library { application->getDatabase().getFilename() };
             library.scan(application->getMountPoint(), stop);
         } catch (std::exception &e) {
             CROW_LOG_ERROR << "Library scan failed: " << e.what();
         }
     } };
-
+    std::jthread watcher { [&](std::stop_token stop) {
+        library.watch(application->getMountPoint(), stop);
+    } };
     app.port(application->getPort()).multithreaded().run();
 
     return 0;

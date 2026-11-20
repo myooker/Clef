@@ -31,6 +31,7 @@ namespace clef::storage {
         }
 
         void scan(const std::filesystem::path &mountPoint, std::stop_token stop);
+        void watch(const std::filesystem::path &mountPoint, std::stop_token stop);
     };
 }
 
