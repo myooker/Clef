@@ -10,6 +10,7 @@
 #include "oggOpus.h"
 #include "oggTag.h"
 #include "wav.h"
+#include "wma.h"
 
 using namespace clef::music::handler;
 
@@ -30,6 +31,8 @@ std::unique_ptr<Interface> Factory::create(const std::string_view extension) {
         return std::make_unique<OggOpus>();
     if (ext == ".wav" || ext == ".wave")
         return std::make_unique<Wav>();
+    if (ext == ".wma")
+        return std::make_unique<Wma>();
 
     return nullptr;
 }
